@@ -49,7 +49,7 @@ const AudioRecorder = () => {
 
   return (
     <div>
-      <audio controls src={recordedUrl} />
+      {/* <audio controls src={recordedUrl} /> */}
       <img
         src={isRecording ? assets.microphone : assets.mic2} // Use appropriate icons based on recording state
         alt={isRecording ? "Stop Recording" : "Start Recording"}
@@ -110,7 +110,7 @@ function SignInForm() {
         <div className="divider">
           <span className="divider-text">---- OR ----</span>
         </div>
-        <p >Please speak your name</p>
+        <p >Please speak anything, like, "Hello Shiva, how are you!"</p>
         {/* Add icon image here */}
       
         <AudioRecorder />

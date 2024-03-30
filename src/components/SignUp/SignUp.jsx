@@ -1,11 +1,74 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { assets } from "../../assets/assets"; // Import your icon image
+
+const AudioRecorder = () => {
+  const [recordedUrl, setRecordedUrl] = useState("");
+  const [isRecording, setIsRecording] = useState(false);
+  const mediaStream = useRef(null);
+  const mediaRecorder = useRef(null);
+  const chunks = useRef([]);
+
+  const toggleRecording = async () => {
+    if (!isRecording) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaStream.current = stream;
+        mediaRecorder.current = new MediaRecorder(stream);
+        mediaRecorder.current.ondataavailable = (e) => {
+          if (e.data.size > 0) {
+            chunks.current.push(e.data);
+          }
+        };
+        mediaRecorder.current.onstop = async () => {
+          try {
+            const recordedBlob = new Blob(chunks.current, { type: "audio/webm" });
+            const url = URL.createObjectURL(recordedBlob);
+            setRecordedUrl(url);
+            chunks.current = [];
+          } catch (error) {
+            console.error("Error getting wave blob:", error);
+          }
+        };
+        mediaRecorder.current.start();
+        setIsRecording(true);
+      } catch (error) {
+        console.error("Error accessing microphone:", error);
+      }
+    } else {
+      if (mediaRecorder.current && mediaRecorder.current.state === "recording") {
+        mediaRecorder.current.stop();
+      }
+      if (mediaStream.current) {
+        mediaStream.current.getTracks().forEach((track) => {
+          track.stop();
+        });
+      }
+      setIsRecording(false);
+    }
+  };
+
+  return (
+    <div>
+      {/* <audio controls src={recordedUrl} /> */}
+      <img
+        src={isRecording ? assets.microphone : assets.mic2} // Use appropriate icons based on recording state
+        alt={isRecording ? "Stop Recording" : "Start Recording"}
+        className="mic-icon"
+        onClick={toggleRecording}
+        style={{cursor: 'pointer'}}
+      />
+    </div>
+  );
+};
 
 function SignUpForm() {
   const [state, setState] = React.useState({
-    name: "",
+    firstname: "",
+    lastname: "",
+    username: "",
     email: "",
-    password: ""
+    password: "",
+
   });
   const handleChange = evt => {
     const value = evt.target.value;
@@ -49,10 +112,24 @@ function SignUpForm() {
         <span>or use your email for registration</span> */}
         <input
           type="text"
-          name="name"
-          value={state.name}
+          name="firstname"
+          value={state.firstname}
           onChange={handleChange}
-          placeholder="Name"
+          placeholder="First Name"
+        />
+        <input
+          type="text"
+          name="lastname"
+          value={state.lastname}
+          onChange={handleChange}
+          placeholder="Last Name"
+        />
+        <input
+          type="text"
+          name="username"
+          value={state.username}
+          onChange={handleChange}
+          placeholder="Username"
         />
         <input
           type="email"
@@ -68,13 +145,9 @@ function SignUpForm() {
           onChange={handleChange}
           placeholder="Password"
         />
-         <p >Please speak your name</p>
-        {/* Add icon image here */}
-        <img
-          src={assets.microphone}
-          alt="Mic Icon"
-          className="mic-icon"
-        />
+         <p >Please speak anything, like, "Hello Shiva, how are you!"</p>
+
+         <AudioRecorder />
         <button>Sign Up</button>
       </form>
     </div>
