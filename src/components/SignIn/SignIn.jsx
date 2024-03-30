@@ -1,7 +1,10 @@
 import React, { useRef, useState } from "react";
 import { assets } from "../../assets/assets"; // Import your icon image
+import {getWaveBlob} from "webm-to-wav-converter"
 
-const AudioRecorder = () => {
+
+
+const AudioRecorder = ({ setUsername }) => {
   const [recordedUrl, setRecordedUrl] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const mediaStream = useRef(null);
@@ -24,7 +27,26 @@ const AudioRecorder = () => {
             const recordedBlob = new Blob(chunks.current, { type: "audio/webm" });
             const url = URL.createObjectURL(recordedBlob);
             setRecordedUrl(url);
+            const waveBlob = await getWaveBlob(recordedBlob, false); // Updated usage of getWaveBlob
+            const audiofile = new File([waveBlob], "audiofile.wav", {
+              type: "audio/wav",
+            });
+            
+            
+            const data = new FormData();
+            data.append("audio", audiofile);
             chunks.current = [];
+
+            const response = await fetch("http://127.0.0.1:5000/login1", {
+              method: "POST",
+              // headers: {
+              //   'Content-type':'multipart/form-data'
+              // },
+              body: data,
+            });
+            console.log(response.status)
+            const res = await response.json()
+            setUsername(res['username'])
           } catch (error) {
             console.error("Error getting wave blob:", error);
           }
@@ -62,11 +84,11 @@ const AudioRecorder = () => {
 };
 
 function SignInForm() {
+  
   const [state, setState] = React.useState({
-    email: "",
+    username: "",
     password: ""
   });
-
   const handleChange = evt => {
     const value = evt.target.value;
     setState({
@@ -75,18 +97,35 @@ function SignInForm() {
     });
   };
 
-  const handleOnSubmit = evt => {
+  const handleOnSubmit = async(evt) => {
     evt.preventDefault();
 
     const { username, password } = state;
-    alert(`You are login with username: ${username} and password: ${password}`);
-
+    // alert(`You are login with username: ${username} and password: ${password}`);
+    // data.append("password", password);
+    // data.append("username", username)
+    const response = await fetch("http://127.0.0.1:5000/login2", {
+      method: "POST",
+      headers: {
+        'Content-type':'application/json'
+      },
+      body: JSON.stringify({username, password}),
+    });
+    if(response.ok){
+      navigate('/');
+    }
     for (const key in state) {
       setState({
         ...state,
         [key]: ""
       });
     }
+  };
+  const setUsername = (newUsername) => {
+    setState((prevState) => ({
+      ...prevState,
+      username: newUsername
+    }));
   };
 
   return (
@@ -113,7 +152,7 @@ function SignInForm() {
         <p >Please speak anything, like, "Hello Shiva, how are you!"</p>
         {/* Add icon image here */}
       
-        <AudioRecorder />
+        <AudioRecorder setUsername={setUsername}/>
         <button>Sign In</button>
       </form>
     </div>

@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { assets } from "../../assets/assets"; // Import your icon image
+import {getWaveBlob} from "webm-to-wav-converter"
 
 const AudioRecorder = () => {
   const [recordedUrl, setRecordedUrl] = useState("");
@@ -8,7 +9,7 @@ const AudioRecorder = () => {
   const mediaRecorder = useRef(null);
   const chunks = useRef([]);
 
-  const toggleRecording = async () => {
+  const toggleRecording = async (state) => {
     if (!isRecording) {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -24,7 +25,31 @@ const AudioRecorder = () => {
             const recordedBlob = new Blob(chunks.current, { type: "audio/webm" });
             const url = URL.createObjectURL(recordedBlob);
             setRecordedUrl(url);
+            const waveBlob = await getWaveBlob(recordedBlob, false); // Updated usage of getWaveBlob
+            const audiofile = new File([waveBlob], "audiofile.wav", {
+              type: "audio/wav",
+            });
+            const data = new FormData();
+            data.append("username", state.username);
+            data.append("password",state.password);
+            data.append("fname", state.firstname);
+            data.append("lname", state.lastname);
+            data.append("email", state.email);
+            data.append("audio", audiofile);
             chunks.current = [];
+
+            const response = await fetch("http://127.0.0.1:5000/register", {
+              method: "POST",
+              // headers: {
+              //   'Content-type':'multipart/form-data'
+              // },
+              body: data,
+            });
+            console.log(response.status)
+            const res = await response.json()
+            if(response.ok){
+                
+            }
           } catch (error) {
             console.error("Error getting wave blob:", error);
           }
@@ -147,7 +172,7 @@ function SignUpForm() {
         />
          <p >Please speak anything, like, "Hello Shiva, how are you!"</p>
 
-         <AudioRecorder />
+         <AudioRecorder state={state}/>
         <button>Sign Up</button>
       </form>
     </div>
