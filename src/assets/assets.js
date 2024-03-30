@@ -16,6 +16,8 @@ import send from './send.png'
 import gemini_icon from './gemini_icon.png'
 import voice from './voice.png'
 import chat from './chat.png'
+import microphone from './microphone.png'
+import mic2 from './mic2.png'
 
 export const assets = {
 	history_icon,
@@ -36,4 +38,6 @@ export const assets = {
 	user,
 	voice,
 	chat,
+	microphone,
+	mic2,
 };

@@ -143,3 +143,24 @@
 .login-button:hover {
     background-color: #0c306b; /* Darker blue color on hover */
 }
+
+.divider {
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+  }
+  
+  .divider-text {
+    flex-grow: 1;
+    text-align: center;
+    color: #555;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  
+  .mic-icon {
+    height: 40px;
+    width: 40px;
+    margin-bottom: 20px;
+  }
+  

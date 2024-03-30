@@ -1,4 +1,6 @@
 import React from "react";
+import { assets } from "../../assets/assets"; // Import your icon image
+
 function SignUpForm() {
   const [state, setState] = React.useState({
     name: "",
@@ -65,6 +67,13 @@ function SignUpForm() {
           value={state.password}
           onChange={handleChange}
           placeholder="Password"
+        />
+         <p >Please speak your name</p>
+        {/* Add icon image here */}
+        <img
+          src={assets.microphone}
+          alt="Mic Icon"
+          className="mic-icon"
         />
         <button>Sign Up</button>
       </form>
