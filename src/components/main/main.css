@@ -1,0 +1,145 @@
+.main {
+    background-color: #000000; /* Dark background color */
+    color: #ffffff; /* Light text color */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    width: 200vh;
+}
+
+.main-container {
+    max-width: 900px;
+    margin: auto;
+    position: relative;
+}
+
+.chat-container {
+    border: 2px solid #ffffff; /* White border */
+    background-color: #000000; /* Black background */
+    padding: 20px;
+    border-radius: 10px;
+    height: 60vh;
+    width: 100vh;
+    overflow-y: auto;
+}
+
+.result-data p {
+    font-size: 17px;
+    font-weight: 300;
+    line-height: 1.8;
+}
+
+.loader {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.loader hr {
+    border-radius: 4px;
+    border: none;
+    background-color: #333333; /* Darker loader background color */
+    height: 20px;
+    animation: loader 4s infinite linear;
+}
+
+@keyframes loader {
+    0% {
+        background-position: -800px 0px;
+    }
+    100% {
+        background-position: 800px 0px;
+    }
+}
+
+.message-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.chat-message {
+    padding: 10px;
+    border-radius: 20px;
+    max-width: 70%;
+    margin-bottom: 10px;
+}
+
+.user-message {
+    background-color: #0e3d89; /* Blue container for user messages */
+    align-self: flex-end; /* Align user messages to the right */
+}
+
+.api-message {
+    background-color: #ffffff; /* White container for API replies */
+    padding: 10px; /* Add padding to the API message container */
+    border-radius: 10px; /* Add border radius for rounded corners */
+    margin-bottom: 10px; /* Add margin bottom to separate messages */
+    max-width: 70%; /* Set maximum width for the message container */
+    align-self: flex-start; /* Align API messages to the left */
+    color: #000000;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    background-color: #000000; /* Darker background color for search box */
+    /* padding: 10px 10px; */
+    margin-top: 50px;
+   
+}
+
+.search-box::after {
+    content: "";
+    position: absolute;
+    bottom: -0.25px; /* Adjust the position of the line as needed */
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: #ffffff; /* White color for the line */
+}
+
+.search-box img {
+    width: 24px;
+    cursor: pointer;
+}
+
+.search-box input {
+    flex: 1;
+    background: transparent;
+    border: 0;
+    outline: 0;
+    padding: 8px;
+    font-size: 18px;
+    color: #e0e0e0; /* Light color for input text */
+}
+
+.bottom-info {
+    font-size: 13px;
+    margin: 15px auto;
+    text-align: center;
+    color: #bdbdbd; /* Light color for bottom info text */
+}
+
+.login-button {
+    position: absolute;
+    top: 20px; /* Adjust vertical position as needed */
+    right: 20px; /* Adjust horizontal position as needed */
+    padding: 10px 20px; /* Adjust padding as needed */
+    background-color: #020810; /* Blue background color */
+    color: #ffffff; /* White text color */
+    border: 2px solid #ffffff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    outline: none;
+    text-decoration: none;
+}
+
+.login-button:hover {
+    background-color: #0c306b; /* Darker blue color on hover */
+}
