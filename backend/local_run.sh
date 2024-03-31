@@ -15,9 +15,8 @@ fi
 . .env/bin/activate
 export ENV=development
 export CUDA_VISIBLE_DEVICES=""
-# export GOOGLE_API_KEY="AIzaSyCGOYJNkoztEVxDN28qgzhe1VCb-RGSh6c"
-export GOOGLE_API_KEY="AIzaSyDHGyOwgRGKFee8LJhpsdUGfHQskf55AXY"
-export GOOGLE_CSE_ID="202fedc3a39114b67"
+export GOOGLE_API_KEY=""
+export GOOGLE_CSE_ID=""
 fuser -n tcp -k 5000
 python3 main.py
 deactivate

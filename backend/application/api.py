@@ -129,7 +129,7 @@ class LoginAPI(Resource):
 
 class Voice_Identification_API(Resource):
     def post(self):
-        model = Model.from_pretrained("pyannote/embedding", use_auth_token="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")
+        model = Model.from_pretrained("pyannote/embedding", use_auth_token="")
 
         inference = Inference(model, window="whole")
 
@@ -182,7 +182,7 @@ class Message_ContextAPI(Resource):
             
         session_id = int(hashlib.sha1(request.form['username'].encode("utf-8")).hexdigest(), 16) % (2 ** 32) + int(request.form['session_id'])
         mongo_history = MongoDBChatMessageHistory(
-        connection_string="mongodb+srv://raghavagarwal3050:CodeRed123@cluster0.rbyukfa.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", 
+        connection_string="", 
         session_id=session_id
     )
         conversational_memory = ConversationBufferMemory(
@@ -203,7 +203,7 @@ class Message_ContextAPI(Resource):
                         description="Useful for when you need to answer questions about math. This tool is only for math questions and nothing else. Only input math expressions.")
 
 
-        tools = [run_terminal_command,search_tool,math_tool , wikipedia_tool, CurrentDateTimeTool(),SaveUserEmailTool(metadata={'username': "Raghav323"}),SendEmailTool(metadata={'mail':'pritpjk@gmail.com','password':'uqeq rqhs vdcq jvuw','username':'Raghav323'}),ReadEmailTool(metadata={'mail':'pritpjk@gmail.com','password':'uqeq rqhs vdcq jvuw','username':'pritK'}), SendEmailTool2(),getCalenderEventsTool(metadata={'username':'pritK'})]
+        tools = [run_terminal_command,search_tool,math_tool , wikipedia_tool, CurrentDateTimeTool(),SaveUserEmailTool(metadata={'username': "Raghav323"}),SendEmailTool(metadata={'mail':'','password':'','username':'Raghav323'}),ReadEmailTool(metadata={'mail':'','password':'','username':'pritK'}), SendEmailTool2(),getCalenderEventsTool(metadata={'username':'pritK'})]
 
 
         agent = initialize_agent(
