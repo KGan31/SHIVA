@@ -1,6 +1,6 @@
-# Gemini Clone
+# SHIVA
 
-Gemini Clone is a project aimed at replicating the functionality of Gemini, powered by the Google Gemini API, using React and CSS.
+SHIVA is a project aimed at developing a personalized Voice Assistant using NLP Techniques.
 
 ## Table of Contents
 
@@ -13,6 +13,10 @@ Gemini Clone is a project aimed at replicating the functionality of Gemini, powe
 ## Introduction
 
 This project introduces a React-based web application that functions as a clone of the Google Gemini AI chatbot. It provides a user-friendly interface for interacting with the powerful Gemini model, allowing you to ask questions and receive informative responses in a conversational manner.
+
+## Demo Video
+
+
 
 ## Features
 
@@ -39,3 +43,5 @@ This project introduces a React-based web application that functions as a clone 
 
    ```bash
    git clone https://github.com/iamakashpc/Gemini-Clone.git
+
+
