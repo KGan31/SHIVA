@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { assets } from "../../assets/assets"; // Import your icon image
 import {getWaveBlob} from "webm-to-wav-converter"
-
+import {useNavigate} from "react-router-dom"
 
 
 const AudioRecorder = ({ setUsername }) => {
@@ -84,7 +84,7 @@ const AudioRecorder = ({ setUsername }) => {
 };
 
 function SignInForm() {
-  
+  const navigate = useNavigate();
   const [state, setState] = React.useState({
     username: "",
     password: ""

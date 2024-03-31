@@ -35,7 +35,8 @@ register_args = {
     "username",
     "password",
     "fname",
-    "lname"
+    "lname",
+    "email"
     
 }
 
@@ -123,7 +124,7 @@ class LoginAPI(Resource):
         if user and check_password_hash(user['password'], password):
             return Response(json.dumps({'message': 'Login successful'}),status=200)
         else:
-            return Response(json.dumps({'message': 'Invalid username or password'}),status=200)
+            return Response(json.dumps({'message': 'Invalid username or password'}),status=400)
 
 
 class Voice_Identification_API(Resource):
