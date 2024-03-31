@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { assets } from "../../assets/assets"; // Import your icon image
 import {getWaveBlob} from "webm-to-wav-converter"
 import {useNavigate} from "react-router-dom"
-
+import { useCookies } from 'react-cookie';
 
 const AudioRecorder = ({ setUsername }) => {
   const [recordedUrl, setRecordedUrl] = useState("");
@@ -10,7 +10,7 @@ const AudioRecorder = ({ setUsername }) => {
   const mediaStream = useRef(null);
   const mediaRecorder = useRef(null);
   const chunks = useRef([]);
-
+ 
   const toggleRecording = async () => {
     if (!isRecording) {
       try {
@@ -73,7 +73,7 @@ const AudioRecorder = ({ setUsername }) => {
     <div>
       {/* <audio controls src={recordedUrl} /> */}
       <img
-        src={isRecording ? assets.microphone : assets.mic2} // Use appropriate icons based on recording state
+        src={isRecording ? assets.voice : assets.mic2} // Use appropriate icons based on recording state
         alt={isRecording ? "Stop Recording" : "Start Recording"}
         className="mic-icon"
         onClick={toggleRecording}
@@ -89,6 +89,7 @@ function SignInForm() {
     username: "",
     password: ""
   });
+  const [cookies, setCookie] = useCookies(['username']);
   const handleChange = evt => {
     const value = evt.target.value;
     setState({
@@ -99,7 +100,7 @@ function SignInForm() {
 
   const handleOnSubmit = async(evt) => {
     evt.preventDefault();
-
+    
     const { username, password } = state;
     // alert(`You are login with username: ${username} and password: ${password}`);
     // data.append("password", password);
@@ -112,6 +113,7 @@ function SignInForm() {
       body: JSON.stringify({username, password}),
     });
     if(response.ok){
+      setCookie('username', username, { path: '/' })
       navigate('/');
     }
     for (const key in state) {

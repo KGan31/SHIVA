@@ -2,12 +2,15 @@ import React, { useRef, useState } from "react";
 import { assets } from "../../assets/assets"; // Import your icon image
 import {getWaveBlob} from "webm-to-wav-converter"
 import { useNavigate } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
+
 const AudioRecorder = ({ username, password, firstname, lastname, email }) => {
   const [recordedUrl, setRecordedUrl] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const mediaStream = useRef(null);
   const mediaRecorder = useRef(null);
   const chunks = useRef([]);
+  const [cookies, setCookie] = useCookies(['username'])
   const navigate = useNavigate();
   const toggleRecording = async () => {
     if (!isRecording) {
@@ -51,6 +54,7 @@ const AudioRecorder = ({ username, password, firstname, lastname, email }) => {
             const res = await response.json()
             console.log(res)
             if(response.ok){
+                setCookie('username', username, { path: '/' })
                 navigate('/');
             }
           } catch (error) {
