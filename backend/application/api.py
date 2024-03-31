@@ -14,7 +14,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.agents import initialize_agent
 from langchain.agents.agent_types import AgentType
 from langchain.memory import ConversationBufferMemory
-from tools import search_tool , CurrentDateTimeTool , SaveUserEmailTool , wikipedia_tool, SendEmailTool , ReadEmailTool , SendEmailTool2
+from tools import run_terminal_command,search_tool , CurrentDateTimeTool , SaveUserEmailTool , wikipedia_tool, SendEmailTool , ReadEmailTool , SendEmailTool2 , getCalenderEventsTool
 from langchain.chains import LLMMathChain, LLMChain
 from langchain.tools import Tool 
 import os 
@@ -93,7 +93,7 @@ class RegisterAPI(Resource):
         print(new_user)
         f = request.files['audio']
         print(f.filename)
-        f.save(f'./user_audio_files/{username}.wav')
+        f.save(f'./user_audio_files/{username}.mp3')
         # # Insert the new user into the database
         db.users.insert_one(new_user)
 
@@ -192,7 +192,7 @@ class Message_ContextAPI(Resource):
             # output_key="answer"
         ) 
             
-        
+    
         
         llm = ChatGoogleGenerativeAI(model="gemini-pro",convert_system_message_to_human=True)
 
@@ -203,7 +203,7 @@ class Message_ContextAPI(Resource):
                         description="Useful for when you need to answer questions about math. This tool is only for math questions and nothing else. Only input math expressions.")
 
 
-        tools = [search_tool,math_tool , wikipedia_tool, CurrentDateTimeTool(),SaveUserEmailTool(metadata={'username': "Raghav323"}),SendEmailTool(metadata={'mail':'pritpjk@gmail.com','password':'uqeq rqhs vdcq jvuw','username':'Raghav323'}),ReadEmailTool(metadata={'mail':'pritpjk@gmail.com','password':'uqeq rqhs vdcq jvuw','username':'pritK'})]
+        tools = [run_terminal_command,search_tool,math_tool , wikipedia_tool, CurrentDateTimeTool(),SaveUserEmailTool(metadata={'username': "Raghav323"}),SendEmailTool(metadata={'mail':'pritpjk@gmail.com','password':'uqeq rqhs vdcq jvuw','username':'Raghav323'}),ReadEmailTool(metadata={'mail':'pritpjk@gmail.com','password':'uqeq rqhs vdcq jvuw','username':'pritK'}), SendEmailTool2(),getCalenderEventsTool(metadata={'username':'pritK'})]
 
 
         agent = initialize_agent(
@@ -214,31 +214,41 @@ class Message_ContextAPI(Resource):
             max_iterations=3,
             memory= conversational_memory,
         )
-        audio_file = request.files['audio']
-        recognizer = sr.Recognizer()
-        r = sr.Recognizer()
-        with sr.AudioFile(audio_file) as source:
-            audio_data = r.record(source) 
-        # audio_data = BytesIO(request.files['audio'].read())
 
-        try:
-            message = recognizer.recognize_google(audio_data)
-            res =  agent(message)
+        if 'message' not in request.form or request.form['message'].strip() == "":
+
+            audio_file = request.files['audio']
+            recognizer = sr.Recognizer()
+            r = sr.Recognizer()
+            with sr.AudioFile(audio_file) as source:
+                audio_data = r.record(source) 
+            # audio_data = BytesIO(request.files['audio'].read())
+
+            try:
+                message = recognizer.recognize_google(audio_data)
+                res =  agent(message)
+                message_list = []
+                for m in res['chat_history']:
+                    message_list.append(m.content)
+
+                
+                final_res = {'input':res['input'],'output':res['output'],'chat_history':message_list}
+                print(final_res)
+                return Response(json.dumps(final_res),status=200)
+            except sr.UnknownValueError:
+                return Response(json.dumps({"message":"Speech Recognition could not understand audio"}),status=400)
+            except sr.RequestError as e:
+                return Response(json.dumps({"message": f"Could not request results from Speech Recognition service; {e}"}),status=400)
+
+            
+        else:
+            res =  agent(request.form['message'])
             message_list = []
             for m in res['chat_history']:
                 message_list.append(m.content)
-
-            
             final_res = {'input':res['input'],'output':res['output'],'chat_history':message_list}
             print(final_res)
             return Response(json.dumps(final_res),status=200)
-        except sr.UnknownValueError:
-            return Response(json.dumps({"message":"Speech Recognition could not understand audio"}),status=400)
-        except sr.RequestError as e:
-            return Response(json.dumps({"message": f"Could not request results from Speech Recognition service; {e}"}),status=400)
-
-            
-        
         # return Response(json.dumps({}),status=200)
         
         

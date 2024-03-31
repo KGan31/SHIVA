@@ -2,12 +2,17 @@
 from langchain.tools import BaseTool,StructuredTool,tool,Tool
 from langchain_community.utilities import GoogleSearchAPIWrapper
 from langchain_community.utilities import WikipediaAPIWrapper
-
-from datetime import datetime
+from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+import os.path
+import pickle
+import datetime
 from database import db 
 import smtplib
 import imaplib
 import email
+import subprocess
 
 class SendEmailTool(BaseTool):
     name = "send_email_name"
@@ -120,7 +125,7 @@ class SaveUserEmailTool(BaseTool):
     
 
 def get_current_date_time():
-    now = datetime.now()
+    now = datetime.datetime.now()
     return now.strftime("%d/%m/%Y %H:%M:%S")
 
 class CurrentDateTimeTool(BaseTool):
@@ -137,7 +142,61 @@ class CurrentDateTimeTool(BaseTool):
 
     def _arun(self):
         raise NotImplementedError("get_current_date_time does not support async")
+
+@tool
+def run_terminal_command(command:str):
+    """ This function runs the terminal command and returns the output of the command"""
+    commands = command.split()
+    if commands[0]=='rm':
+        return "Cannot execute rm command. It is disabled for security reasons."
+    process = subprocess.Popen(commands , stdout=subprocess.PIPE)
+    output, error = process.communicate()
+    return output.decode('utf-8') 
+
+class getCalenderEventsTool(BaseTool):
+    name = "get_calender_events"
+    description = "It gives you the upcoming events in your calender"
+
+    def _run(self):
+        SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
+        creds = None
+        # The file token.pickle stores the user's access and refresh tokens, and is
+        # created automatically when the authorization flow completes for the first
+        # time.
+        if os.path.exists('token.pickle'):
+            with open('token.pickle', 'rb') as token:
+                creds = pickle.load(token)
+        # If there are no (valid) credentials available, let the user log in.
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    'credentials.json', SCOPES)
+                creds = flow.run_local_server(port=0)
+            # Save the credentials for the next run
+            with open('token.pickle', 'wb') as token:
+                pickle.dump(creds, token)
+
+        service = build('calendar', 'v3', credentials=creds)
+
+        # Call the Calendar API
+        now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
+        print('Getting the upcoming 10 events')
+        events_result = service.events().list(calendarId='primary', timeMin=now,
+                                            maxResults=10, singleEvents=True,
+                                            orderBy='startTime').execute()
+        events = events_result.get('items', [])
+
+        if not events:
+            return 'No upcoming events found.'
+        all_events = "Upcoming events are : \n "
+        for event in events:
+            start = event['start'].get('dateTime', event['start'].get('date'))
+            all_events+= f"{start} , {event['summary']} \n"
     
+        return all_events
+
 search = GoogleSearchAPIWrapper()
 
 search_tool = StructuredTool.from_function(
