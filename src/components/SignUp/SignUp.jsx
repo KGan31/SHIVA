@@ -1,15 +1,15 @@
 import React, { useRef, useState } from "react";
 import { assets } from "../../assets/assets"; // Import your icon image
 import {getWaveBlob} from "webm-to-wav-converter"
-
-const AudioRecorder = () => {
+import { useNavigate } from 'react-router-dom';
+const AudioRecorder = ({ username, password, firstname, lastname, email }) => {
   const [recordedUrl, setRecordedUrl] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const mediaStream = useRef(null);
   const mediaRecorder = useRef(null);
   const chunks = useRef([]);
-
-  const toggleRecording = async (state) => {
+  const navigate = useNavigate();
+  const toggleRecording = async () => {
     if (!isRecording) {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -30,25 +30,28 @@ const AudioRecorder = () => {
               type: "audio/wav",
             });
             const data = new FormData();
-            data.append("username", state.username);
-            data.append("password",state.password);
-            data.append("fname", state.firstname);
-            data.append("lname", state.lastname);
-            data.append("email", state.email);
+            // console.log(state);
+            console.log(firstname)
+            data.append("username", username);
+            data.append("password",password);
+            data.append("fname", firstname);
+            data.append("lname", lastname);
+            data.append("email", email);
             data.append("audio", audiofile);
             chunks.current = [];
-
+            console.log(data)
             const response = await fetch("http://127.0.0.1:5000/register", {
               method: "POST",
-              // headers: {
-              //   'Content-type':'multipart/form-data'
-              // },
+            //   headers: {
+            //     'Content-type':'multipart/form-data'
+            //   },
               body: data,
             });
             console.log(response.status)
             const res = await response.json()
+            console.log(res)
             if(response.ok){
-                
+                navigate('/');
             }
           } catch (error) {
             console.error("Error getting wave blob:", error);
@@ -101,6 +104,7 @@ function SignUpForm() {
       ...state,
       [evt.target.name]: value
     });
+    console.log(state)
   };
 
   const handleOnSubmit = evt => {
@@ -172,7 +176,11 @@ function SignUpForm() {
         />
          <p >Please speak anything, like, "Hello Shiva, how are you!"</p>
 
-         <AudioRecorder state={state}/>
+         <AudioRecorder username={state.username}
+            password={state.password}
+            firstname={state.firstname}
+            lastname={state.lastname}
+            email={state.email}/>
         <button>Sign Up</button>
       </form>
     </div>

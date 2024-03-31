@@ -37,7 +37,7 @@ const AudioRecorder = ({ setUsername }) => {
             data.append("audio", audiofile);
             chunks.current = [];
 
-            const response = await fetch("http://127.0.0.1:5000/login1", {
+            const response = await fetch("http://127.0.0.1:5000/voiceIdentification", {
               method: "POST",
               // headers: {
               //   'Content-type':'multipart/form-data'
@@ -104,7 +104,7 @@ function SignInForm() {
     // alert(`You are login with username: ${username} and password: ${password}`);
     // data.append("password", password);
     // data.append("username", username)
-    const response = await fetch("http://127.0.0.1:5000/login2", {
+    const response = await fetch("http://127.0.0.1:5000/login", {
       method: "POST",
       headers: {
         'Content-type':'application/json'

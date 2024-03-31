@@ -92,7 +92,7 @@ class RegisterAPI(Resource):
         print(new_user)
         f = request.files['audio']
         print(f.filename)
-        f.save(f'./user_audio_files/{username}.mp3')
+        f.save(f'./user_audio_files/{username}.wav')
         # # Insert the new user into the database
         db.users.insert_one(new_user)
 
