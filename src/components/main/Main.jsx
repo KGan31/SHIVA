@@ -50,7 +50,6 @@ const AudioRecorder = () => {
               });
               console.log(response.status)
               const res = await response.json()
-              setUsername(res['username'])
             } catch (error) {
               console.error("Error getting wave blob:", error);
             }
