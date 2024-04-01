@@ -46,6 +46,6 @@ https://github.com/KGan31/SHIVA/assets/103832825/a2687473-3267-45e8-a187-8e92ecb
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/iamakashpc/Gemini-Clone.git
+   git clone https://github.com/KGan31/SHIVA
 
 
